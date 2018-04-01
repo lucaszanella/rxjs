@@ -24,3 +24,4 @@ spec-build/
 # Misc
 npm-debug.log
 .DS_STORE
+dev/node_modules

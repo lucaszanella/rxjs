@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  rxjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /home/project/rxjs
+    image: rxjs
+    stdin_open: true
+    tty: true
+    network_mode: "host"
+    privileged: false
+    volumes:
+     - "../:/home/project/rxjs"
+     - "./node_modules:/home/project/rxjs/node_modules"
+ 
+
+
