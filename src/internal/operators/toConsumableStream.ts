@@ -1,13 +1,12 @@
 import { Operator } from '../Operator';
 import { Subscriber } from '../Subscriber';
 import { Observable } from '../Observable';
-import { TeardownLogic } from '../Subscription';
-import { MonoTypeOperatorFunction } from '../../internal/types';
+import { MonoTypeOperatorFunction, TeardownLogic } from '../types';
 
 export interface ConsumableObject {
-  HasNext() : boolean;
+  HasNext(): boolean;
   isClosed(): boolean;
-  next()    : any;
+  next(): any;
 }
 
 //interface Pointer<T> {
@@ -32,14 +31,14 @@ export function toConsumableStream<T>(consumable: ConsumableObject): MonoTypeOpe
 
 class ToConsumableStreamOperator<T> implements Operator<T, T> {
   consumable: ConsumableObject;
-  subscriber: ToConsumableStreamSubscriber<T>
+  subscriber: ToConsumableStreamSubscriber<T>;
 
   constructor(consumable: ConsumableObject) {
     this.consumable = consumable;
   }
 
   call(subscriber: Subscriber<T>, source: any): TeardownLogic {
-    this.subscriber = new ToConsumableStreamSubscriber(subscriber, this.consumable)
+    this.subscriber = new ToConsumableStreamSubscriber(subscriber, this.consumable);
     return source.subscribe(this.subscriber);
   }
 }

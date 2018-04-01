@@ -1,8 +1,7 @@
 import { Operator } from '../Operator';
 import { Subscriber } from '../Subscriber';
 import { Observable } from '../Observable';
-import { TeardownLogic } from '../Subscription';
-import { MonoTypeOperatorFunction } from '../../internal/types';
+import { MonoTypeOperatorFunction, TeardownLogic } from '../types';
 
 /**
  * Returns an Observable that skips the first `count` items emitted by the source Observable.
@@ -20,13 +19,13 @@ export function consumeAnother<T>(): MonoTypeOperatorFunction<T> {
 }
 
 class ConsumeAnotherOperator<T> implements Operator<T, T> {
-  constructor() {
-  }
+//  constructor() {
+//  }
 
   call(subscriber: Subscriber<T>, source: any): TeardownLogic {
     let current: any;
 
-    for(current = source; source.hasOwnProperty('source'); current = source.source) {
+    for (current = source; source.hasOwnProperty('source'); current = source.source) {
       if (current.hasOwnProperty('consumableSubscriberAwayting') && current.consumableSubscriberAwayting) {
         current.consumableSubscriberAwayting = false;
         return source.subscribe(new ConsumeAnotherSubscriber(subscriber, current));
@@ -47,11 +46,14 @@ class ConsumeAnotherSubscriber<T> extends Subscriber<T> {
 
   constructor(destination: Subscriber<T>, consumableSource?: any) {
     super(destination);
-    consumableSource ? this.consumableSource = consumableSource : null;
+    this.consumableSource = consumableSource;
   }
 
   protected _next(x: T) {
       this.destination.next(x);
-      this.consumableSource.operator.consumable.hasNext() ? this.consumableSource.operator.consumable.emitNext() : null; //Makes the next item be emitted 
-  }
+      //this.consumableSource.operator.consumable.hasNext() ? this.consumableSource.operator.consumable.emitNext() : null;
+      if (this.consumableSource.operator.consumable.hasNext()) {
+        this.consumableSource.operator.consumable.emitNext();
+      }
+    }
 }
